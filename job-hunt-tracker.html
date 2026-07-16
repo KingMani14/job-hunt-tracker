@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hunt Dossier</title>
+<style>
+  :root {
+    --ink: #15130f;
+    --ink-soft: #201d17;
+    --paper: #f1ead9;
+    --paper-line: #d9cfb5;
+    --text-dark: #241f18;
+    --text-mute: #6b6252;
+    --stamp-applied: #4a6fa5;
+    --stamp-interview: #b98420;
+    --stamp-offer: #3f6b4f;
+    --stamp-rejected: #a13d31;
+    --font-display: 'Courier New', 'Courier Prime', monospace;
+    --font-body: Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.03) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(255,255,255,0.02) 0%, transparent 40%);
+    color: var(--paper);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid var(--paper);
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  header h1 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  header .case-no {
+    font-family: var(--font-display);
+    color: var(--paper-line);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  .summary-bar {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+  .summary-bar span { color: var(--text-mute); }
+  .summary-bar .count { color: var(--paper); font-weight: bold; }
+
+  .panel {
+    background: var(--paper);
+    color: var(--text-dark);
+    border-radius: 2px;
+    padding: 24px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    margin-bottom: 32px;
+  }
+
+  .panel h2 {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 0 16px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--paper-line);
+    padding-bottom: 10px;
+  }
+
+  form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  form .full { grid-column: 1 / -1; }
+
+  label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-mute);
+    margin-bottom: 4px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: #fffdf7;
+    border: 1px solid var(--paper-line);
+    padding: 9px 10px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    border-radius: 2px;
+  }
+
+  textarea { resize: vertical; min-height: 50px; }
+
+  button {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.8rem;
+    padding: 11px 18px;
+    border: 1px solid var(--text-dark);
+    background: var(--text-dark);
+    color: var(--paper);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  button:hover { background: #3a3226; }
+  button:active { transform: scale(0.97); }
+  button.secondary {
+    background: transparent;
+    color: var(--text-dark);
+  }
+  button.secondary:hover { background: rgba(0,0,0,0.06); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .filters button {
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid var(--paper-line);
+    font-size: 0.7rem;
+    padding: 7px 12px;
+  }
+  .filters button.active {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  .entry {
+    background: var(--paper);
+    color: var(--text-dark);
+    border-radius: 2px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+    position: relative;
+  }
+
+  .entry .role { font-size: 1.05rem; font-weight: bold; margin: 0; }
+  .entry .company { color: var(--text-mute); font-size: 0.9rem; margin: 2px 0 0; }
+  .entry .meta {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    color: var(--text-mute);
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+  .entry .notes {
+    grid-column: 1 / -1;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    border-top: 1px dashed var(--paper-line);
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .entry a { color: var(--stamp-applied); }
+
+  .stamp {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    border: 2.5px solid;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transform: rotate(-4deg);
+    height: fit-content;
+    white-space: nowrap;
+    opacity: 0.9;
+  }
+  .stamp.applied { color: var(--stamp-applied); border-color: var(--stamp-applied); }
+  .stamp.interview { color: var(--stamp-interview); border-color: var(--stamp-interview); transform: rotate(3deg); }
+  .stamp.offer { color: var(--stamp-offer); border-color: var(--stamp-offer); transform: rotate(-2deg); }
+  .stamp.rejected { color: var(--stamp-rejected); border-color: var(--stamp-rejected); transform: rotate(4deg); }
+
+  .entry-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  .entry-actions button {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    background: transparent;
+    color: var(--text-mute);
+    border: 1px solid var(--paper-line);
+  }
+  .entry-actions button:hover { background: rgba(0,0,0,0.05); color: var(--text-dark); }
+
+  .empty {
+    text-align: center;
+    color: var(--paper-line);
+    font-family: var(--font-display);
+    letter-spacing: 1px;
+    padding: 40px 0;
+    font-size: 0.85rem;
+  }
+
+  select#statusSelect { cursor: pointer; }
+
+  @media (max-width: 600px) {
+    form { grid-template-columns: 1fr; }
+    .entry { grid-template-columns: 1fr; }
+    .stamp { justify-self: start; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Job Hunt Dossier</h1>
+    <div class="case-no" id="caseNo">CASE FILE — OPEN</div>
+  </header>
+
+  <div class="summary-bar" id="summaryBar"></div>
+
+  <div class="panel">
+    <h2>Log a New Application</h2>
+    <form id="entryForm">
+      <div>
+        <label for="company">Company</label>
+        <input type="text" id="company" required placeholder="Acme Corp">
+      </div>
+      <div>
+        <label for="role">Role</label>
+        <input type="text" id="role" required placeholder="Backend Engineer">
+      </div>
+      <div>
+        <label for="dateApplied">Date Applied</label>
+        <input type="date" id="dateApplied" required>
+      </div>
+      <div>
+        <label for="statusSelect">Status</label>
+        <select id="statusSelect">
+          <option value="applied">Applied</option>
+          <option value="interview">Interview</option>
+          <option value="offer">Offer</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="full">
+        <label for="link">Job Link (optional)</label>
+        <input type="url" id="link" placeholder="https://...">
+      </div>
+      <div class="full">
+        <label for="notes">Notes (optional)</label>
+        <textarea id="notes" placeholder="Recruiter contact, interview prep, follow-up date..."></textarea>
+      </div>
+      <div class="full" style="display:flex; gap:10px;">
+        <button type="submit">Add to Dossier</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div id="entries"></div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'jobHuntDossier';
+  const STATUSES = ['applied', 'interview', 'offer', 'rejected'];
+  let currentFilter = 'all';
+
+  function loadEntries() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function render() {
+    const entries = loadEntries().sort((a, b) => new Date(b.dateApplied) - new Date(a.dateApplied));
+
+    // Summary bar
+    const counts = { applied: 0, interview: 0, offer: 0, rejected: 0 };
+    entries.forEach(e => counts[e.status] = (counts[e.status] || 0) + 1);
+    const summaryBar = document.getElementById('summaryBar');
+    summaryBar.innerHTML = `
+      <span><span class="count">${entries.length}</span> total</span>
+      <span><span class="count">${counts.applied}</span> applied</span>
+      <span><span class="count">${counts.interview}</span> interview</span>
+      <span><span class="count">${counts.offer}</span> offer</span>
+      <span><span class="count">${counts.rejected}</span> rejected</span>
+    `;
+    document.getElementById('caseNo').textContent = entries.length
+      ? `CASE FILE — ${entries.length} LEAD${entries.length === 1 ? '' : 'S'} OPEN`
+      : 'CASE FILE — NO LEADS YET';
+
+    // Filters
+    const filtersEl = document.getElementById('filters');
+    const filterOptions = ['all', ...STATUSES];
+    filtersEl.innerHTML = filterOptions.map(f =>
+      `<button data-filter="${f}" class="${f === currentFilter ? 'active' : ''}">${f}</button>`
+    ).join('');
+    filtersEl.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFilter = btn.dataset.filter;
+        render();
+      });
+    });
+
+    // Entries
+    const entriesEl = document.getElementById('entries');
+    const visible = currentFilter === 'all' ? entries : entries.filter(e => e.status === currentFilter);
+
+    if (!visible.length) {
+      entriesEl.innerHTML = `<div class="empty">No entries here yet. Log an application above to open a lead.</div>`;
+      return;
+    }
+
+    entriesEl.innerHTML = visible.map(e => `
+      <div class="entry">
+        <div>
+          <p class="role">${escapeHtml(e.role)}</p>
+          <p class="company">${escapeHtml(e.company)}</p>
+          <div class="meta">
+            APPLIED ${formatDate(e.dateApplied).toUpperCase()}
+            ${e.link ? ` &middot; <a href="${escapeAttr(e.link)}" target="_blank" rel="noopener">JOB LINK</a>` : ''}
+          </div>
+        </div>
+        <div class="stamp ${e.status}">${e.status}</div>
+        ${e.notes ? `<div class="notes">${escapeHtml(e.notes)}</div>` : ''}
+        <div class="entry-actions">
+          <button data-action="cycle" data-id="${e.id}">Advance Status</button>
+          <button data-action="delete" data-id="${e.id}">Close Case</button>
+        </div>
+      </div>
+    `).join('');
+
+    entriesEl.querySelectorAll('button[data-action="cycle"]').forEach(btn => {
+      btn.addEventListener('click', () => cycleStatus(btn.dataset.id));
+    });
+    entriesEl.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
+    });
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+  function escapeAttr(str) {
+    return (str || '').replace(/"/g, '&quot;');
+  }
+
+  function cycleStatus(id) {
+    const entries = loadEntries();
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+    const idx = STATUSES.indexOf(entry.status);
+    entry.status = STATUSES[(idx + 1) % STATUSES.length];
+    saveEntries(entries);
+    render();
+  }
+
+  function deleteEntry(id) {
+    if (!confirm('Close and remove this case from your dossier?')) return;
+    const entries = loadEntries().filter(e => e.id !== id);
+    saveEntries(entries);
+    render();
+  }
+
+  document.getElementById('entryForm').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const entries = loadEntries();
+    entries.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      company: document.getElementById('company').value.trim(),
+      role: document.getElementById('role').value.trim(),
+      dateApplied: document.getElementById('dateApplied').value,
+      status: document.getElementById('statusSelect').value,
+      link: document.getElementById('link').value.trim(),
+      notes: document.getElementById('notes').value.trim(),
+    });
+    saveEntries(entries);
+    evt.target.reset();
+    document.getElementById('dateApplied').valueAsDate = new Date();
+    render();
+  });
+
+  // Default date to today
+  document.getElementById('dateApplied').valueAsDate = new Date();
+
+  render();
+</script>
+</body>
+</html>
